@@ -1,0 +1,34 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: studypulse_pg
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: studypulse
+      POSTGRES_PASSWORD: studypulse
+      POSTGRES_DB: studypulse
+    ports: ["5432:5432"]
+    volumes: [pg_data:/var/lib/postgresql/data]
+
+  mongo:
+    image: mongo:7
+    container_name: studypulse_mongo
+    restart: unless-stopped
+    ports: ["27017:27017"]
+    volumes: [mongo_data:/data/db]
+
+  api:
+    build: .
+    container_name: studypulse_api
+    restart: unless-stopped
+    depends_on: [postgres, mongo]
+    env_file: .env
+    environment:
+      DB_HOST: postgres
+      MONGO_URI: mongodb://mongo:27017/studypulse
+    ports: ["3000:3000"]
+
+volumes:
+  pg_data:
+  mongo_data:
