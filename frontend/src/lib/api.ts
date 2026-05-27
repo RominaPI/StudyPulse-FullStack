@@ -6,17 +6,23 @@ export async function api<T>(
 ): Promise<T> {
   const token = localStorage.getItem("token");
 
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+  };
+
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  if (options.headers) {
+    Object.assign(headers, options.headers);
+  }
+
   const response = await fetch(
     `${API_URL}${path}`,
     {
       ...options,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token
-          ? `Bearer ${token}`
-          : "",
-        ...(options.headers || {}),
-      },
+      headers,
     }
   );
 
@@ -25,8 +31,8 @@ export async function api<T>(
 
     throw new Error(
       error.error ||
-        error.message ||
-        "Request failed"
+      error.message ||
+      "Request failed"
     );
   }
 
