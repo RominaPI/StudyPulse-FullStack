@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/components/layout.tsx","./src/lib/api.ts","./src/lib/auth.tsx","./src/pages/dashboard.tsx","./src/pages/feed.tsx","./src/pages/grupos.tsx","./src/pages/login.tsx","./src/pages/materias.tsx","./src/pages/register.tsx","./src/pages/sesiones.tsx","./src/pages/tareas.tsx"],"version":"5.9.3"}

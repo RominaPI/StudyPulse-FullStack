@@ -18,7 +18,9 @@ export class StudySessionsController {
   constructor(private svc: StudySessionsService) {}
   @Get() list(@Query('group_id', ParseUUIDPipe) g: string) { return this.svc.byGroup(g); }
   @Get(':id') findOne(@Param('id', ParseUUIDPipe) id: string) { return this.svc.findOne(id); }
-  @Post() schedule(@CurrentUser('id') uid: string, @Body() dto: ScheduleDto) { return this.svc.schedule(uid, dto); }
+  @Post() schedule(@CurrentUser('id') uid: string, @Body() dto: ScheduleDto) {
+    return this.svc.schedule(uid, { ...dto, starts_at: new Date(dto.starts_at) });
+  }  
   @Post(':id/check-in') checkIn(@Param('id', ParseUUIDPipe) id: string, @CurrentUser('id') uid: string) { return this.svc.checkIn(id, uid); }
   @Post(':id/focus') focus(@Param('id', ParseUUIDPipe) id: string, @CurrentUser('id') uid: string, @Body() dto: FocusDto) { return this.svc.logFocus(id, uid, dto.focus_minutes); }
 }

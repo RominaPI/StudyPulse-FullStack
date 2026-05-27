@@ -10,14 +10,14 @@ export default function Grupos() {
   const [err, setErr] = useState<string | null>(null);
 
   const load = () =>
-    api<Grupo[]>("/groups").then(setItems).catch((e) => setErr(e.message));
+    api<Grupo[]>("/study-groups").then(setItems).catch((e) => setErr(e.message));
 
   useEffect(() => { load(); }, []);
 
   const create = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await api("/groups", { method: "POST", body: JSON.stringify({ name, description }) });
+      await api("/study-groups", { method: "POST", body: JSON.stringify({ name, description }) });
       setName(""); setDescription(""); load();
     } catch (e: any) { setErr(e.message); }
   };

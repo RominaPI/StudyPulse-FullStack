@@ -14,4 +14,12 @@ export class TasksService {
     if (!t) throw new NotFoundException(); return t;
   }
   remove(id: string) { return this.repo.delete(id); }
+
+  findAll() {
+  return this.repo.find({
+    order: {
+      created_at: 'DESC',
+    },
+  });
+}
 }

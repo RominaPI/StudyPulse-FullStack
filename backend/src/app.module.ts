@@ -3,7 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MongooseModule } from '@nestjs/mongoose';
 import { APP_GUARD } from '@nestjs/core';
-
+import { DashboardModule } from './dashboard/dashboard.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { UniversitiesModule } from './universities/universities.module';
@@ -47,7 +47,7 @@ import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
     AuthModule, UsersModule, UniversitiesModule, SubjectsModule,
     StudyGroupsModule, GroupMembersModule, TasksModule, StudySessionsModule,
     ResourcesModule, NotificationsModule, FriendshipsModule,
-    ChatModule, FeedModule, CommentsModule, ReactionsModule, StressLogsModule,
+    ChatModule, FeedModule, CommentsModule, ReactionsModule, StressLogsModule, DashboardModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: JwtAuthGuard }],
 })
