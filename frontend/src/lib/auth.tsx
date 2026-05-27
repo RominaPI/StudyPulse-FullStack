@@ -1,46 +1,141 @@
-import { createContext, useContext, useState } from "react";
-import { api, tokenStorage } from "./api";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
 
-interface AuthContextType {
-  user: any;
+type User = {
+  id: string;
+  email: string;
+  name?: string;
+};
+
+type RegisterData = {
+  name: string;
+  email: string;
+  password: string;
+};
+
+type AuthContextType = {
+  user: User | null;
+  loading: boolean;
+
   login: (email: string, password: string) => Promise<void>;
+
+  register: (data: RegisterData) => Promise<void>;
+
   logout: () => void;
-}
+};
 
-const AuthContext = createContext<AuthContextType>({} as AuthContextType);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState(tokenStorage.getUser());
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+
+    setLoading(false);
+  }, []);
 
   const login = async (email: string, password: string) => {
-    const res = await api<any>("/auth/login", {
-      method: "POST",
-      body: JSON.stringify({ email, password }),
-    });
+    setLoading(true);
 
-    console.log("LOGIN RESPONSE", res);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+        }
+      );
 
-    // GUARDAR TOKEN
-    tokenStorage.set(res.access_token);
+      if (!response.ok) {
+        throw new Error("Login failed");
+      }
 
-    // GUARDAR USUARIO
-    tokenStorage.setUser(res.user);
+      const data = await response.json();
 
-    setUser(res.user);
+      localStorage.setItem("token", data.access_token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      setUser(data.user);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const register = async (registerData: RegisterData) => {
+    setLoading(true);
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/auth/register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(registerData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Register failed");
+      }
+
+      const data = await response.json();
+
+      localStorage.setItem("token", data.access_token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      setUser(data.user);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const logout = () => {
-    tokenStorage.clear();
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        login,
+        register,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 }
 
 export function useAuth() {
-  return useContext(AuthContext);
+  const context = useContext(AuthContext);
+
+  if (!context) {
+    throw new Error("useAuth must be used within AuthProvider");
+  }
+
+  return context;
 }
