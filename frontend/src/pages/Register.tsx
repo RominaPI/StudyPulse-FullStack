@@ -7,6 +7,7 @@ export default function Register() {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
+    full_name: "",
     username: "",
     email: "",
     password: "",
@@ -18,7 +19,10 @@ export default function Register() {
   const set =
     (k: keyof typeof form) =>
     (e: React.ChangeEvent<HTMLInputElement>) =>
-      setForm({ ...form, [k]: e.target.value });
+      setForm({
+        ...form,
+        [k]: e.target.value,
+      });
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -30,7 +34,10 @@ export default function Register() {
       await register(form);
       navigate("/dashboard");
     } catch (e: any) {
-      setErr(e.message);
+      setErr(
+        e?.message ||
+          "No se pudo crear la cuenta. Verifica los datos."
+      );
     } finally {
       setLoading(false);
     }
@@ -43,50 +50,85 @@ export default function Register() {
           Crear cuenta
         </h1>
 
-        <p className="muted" style={{ marginBottom: 20 }}>
+        <p
+          className="muted"
+          style={{ marginBottom: 20 }}
+        >
           Únete a tu comunidad universitaria
         </p>
 
         <form onSubmit={onSubmit}>
           <div className="field">
-            <label className="label">Username</label>
+            <label className="label">
+              Nombre completo
+            </label>
 
             <input
               className="input"
               required
-              value={form.username}
-              onChange={set("username")}
-              placeholder="romina123"
+              maxLength={60}
+              placeholder="Romina Pavon"
+              value={form.full_name}
+              onChange={set("full_name")}
             />
           </div>
 
           <div className="field">
-            <label className="label">Email</label>
+            <label className="label">
+              Username
+            </label>
+
+            <input
+              className="input"
+              required
+              placeholder="romina_pavon"
+              value={form.username}
+              onChange={set("username")}
+            />
+
+            <small className="muted">
+              Usa solo letras, números,
+              puntos, guiones o guion bajo.
+              Sin espacios.
+            </small>
+          </div>
+
+          <div className="field">
+            <label className="label">
+              Email
+            </label>
 
             <input
               className="input"
               type="email"
               required
+              placeholder="romina@email.com"
               value={form.email}
               onChange={set("email")}
             />
           </div>
 
           <div className="field">
-            <label className="label">Contraseña</label>
+            <label className="label">
+              Contraseña
+            </label>
 
             <input
               className="input"
               type="password"
               required
               minLength={6}
+              placeholder="Mínimo 6 caracteres"
               value={form.password}
               onChange={set("password")}
             />
           </div>
 
           {err && (
-            <div className="alert" style={{ marginBottom: 12 }}>
+            <div
+              className="alert"
+              style={{ marginBottom: 12 }}
+            >
               {err}
             </div>
           )}
@@ -96,15 +138,23 @@ export default function Register() {
             style={{ width: "100%" }}
             disabled={loading}
           >
-            {loading ? "Creando…" : "Crear cuenta"}
+            {loading
+              ? "Creando…"
+              : "Crear cuenta"}
           </button>
         </form>
 
         <p
           className="muted"
-          style={{ marginTop: 16, textAlign: "center" }}
+          style={{
+            marginTop: 16,
+            textAlign: "center",
+          }}
         >
-          ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
+          ¿Ya tienes cuenta?{" "}
+          <Link to="/login">
+            Inicia sesión
+          </Link>
         </p>
       </div>
     </div>
