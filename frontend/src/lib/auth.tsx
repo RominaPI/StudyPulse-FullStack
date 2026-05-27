@@ -12,7 +12,9 @@ type User = {
   name?: string;
 };
 
+
 type RegisterData = {
+  full_name: string;
   username: string;
   email: string;
   password: string;
@@ -78,35 +80,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const register = async (registerData: RegisterData) => {
-    setLoading(true);
+const register = async (registerData: RegisterData) => {
+  setLoading(true);
 
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/auth/register`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(registerData),
-        }
-      );
+  try {
+    console.log(registerData);
 
-      if (!response.ok) {
-        throw new Error("Register failed");
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/auth/register`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(registerData),
       }
+    );
 
-      const data = await response.json();
-
-      localStorage.setItem("token", data.access_token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-
-      setUser(data.user);
-    } finally {
-      setLoading(false);
+    if (!response.ok) {
+      throw new Error("Register failed");
     }
-  };
+
+    const data = await response.json();
+
+    localStorage.setItem("token", data.access_token);
+    localStorage.setItem("user", JSON.stringify(data.user));
+
+    setUser(data.user);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const logout = () => {
     localStorage.removeItem("token");
