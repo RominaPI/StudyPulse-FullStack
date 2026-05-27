@@ -1,162 +1,65 @@
-import { FormEvent, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../lib/auth";
+<div className="field">
+  <label className="label">
+    Nombre completo
+  </label>
 
-export default function Register() {
-  const { register } = useAuth();
-  const navigate = useNavigate();
+  <input
+    className="input"
+    required
+    maxLength={60}
+    value={form.full_name}
+    onChange={set("full_name")}
+  />
+</div>
 
-  const [form, setForm] = useState({
-    full_name: "",
-    username: "",
-    email: "",
-    password: "",
-  });
+<div className="field">
+  <label className="label">
+    Username
+  </label>
 
-  const [err, setErr] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  <input
+    className="input"
+    required
+    value={form.username}
+    onChange={set("username")}
+  />
 
-  const set =
-    (k: keyof typeof form) =>
-    (e: React.ChangeEvent<HTMLInputElement>) =>
-      setForm({
-        ...form,
-        [k]: e.target.value,
-      });
+  <small className="muted">
+    Usa solo letras, números,
+    puntos, guiones o guion bajo.
+    Sin espacios.
+  </small>
+</div>
 
-  const onSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+<div className="field">
+  <label className="label">
+    Email
+  </label>
 
-    setErr(null);
-    setLoading(true);
+  <input
+    className="input"
+    type="email"
+    required
+    value={form.email}
+    onChange={set("email")}
+  />
+</div>
 
-    try {
-      await register(form);
-      navigate("/dashboard");
-    } catch (e: any) {
-      setErr(
-        e?.message ||
-          "No se pudo crear la cuenta. Verifica los datos."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+<div className="field">
+  <label className="label">
+    Contraseña
+  </label>
 
-  return (
-    <div className="auth-wrap">
-      <div className="card auth-card">
-        <h1 className="h1" style={{ marginBottom: 4 }}>
-          Crear cuenta
-        </h1>
+  <input
+    className="input"
+    type="password"
+    required
+    minLength={8}
+    value={form.password}
+    onChange={set("password")}
+  />
 
-        <p
-          className="muted"
-          style={{ marginBottom: 20 }}
-        >
-          Únete a tu comunidad universitaria
-        </p>
-
-        <form onSubmit={onSubmit}>
-          <div className="field">
-            <label className="label">
-              Nombre completo
-            </label>
-
-            <input
-              className="input"
-              required
-              maxLength={60}
-              placeholder="Romina Pavon"
-              value={form.full_name}
-              onChange={set("full_name")}
-            />
-          </div>
-
-          <div className="field">
-            <label className="label">
-              Username
-            </label>
-
-            <input
-              className="input"
-              required
-              placeholder="romina_pavon"
-              value={form.username}
-              onChange={set("username")}
-            />
-
-            <small className="muted">
-              Usa solo letras, números,
-              puntos, guiones o guion bajo.
-              Sin espacios.
-            </small>
-          </div>
-
-          <div className="field">
-            <label className="label">
-              Email
-            </label>
-
-            <input
-              className="input"
-              type="email"
-              required
-              placeholder="romina@email.com"
-              value={form.email}
-              onChange={set("email")}
-            />
-          </div>
-
-          <div className="field">
-            <label className="label">
-              Contraseña
-            </label>
-
-            <input
-              className="input"
-              type="password"
-              required
-              minLength={6}
-              placeholder="Mínimo 6 caracteres"
-              value={form.password}
-              onChange={set("password")}
-            />
-          </div>
-
-          {err && (
-            <div
-              className="alert"
-              style={{ marginBottom: 12 }}
-            >
-              {err}
-            </div>
-          )}
-
-          <button
-            className="btn btn-primary"
-            style={{ width: "100%" }}
-            disabled={loading}
-          >
-            {loading
-              ? "Creando…"
-              : "Crear cuenta"}
-          </button>
-        </form>
-
-        <p
-          className="muted"
-          style={{
-            marginTop: 16,
-            textAlign: "center",
-          }}
-        >
-          ¿Ya tienes cuenta?{" "}
-          <Link to="/login">
-            Inicia sesión
-          </Link>
-        </p>
-      </div>
-    </div>
-  );
-}
+  <small className="muted">
+    Mínimo 8 caracteres.
+  </small>
+</div>
