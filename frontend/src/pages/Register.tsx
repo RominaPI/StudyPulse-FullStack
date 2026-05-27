@@ -5,7 +5,7 @@ import { useAuth } from "../lib/auth";
 export default function Register() {
   const { register } = useAuth();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ fullName: "", username: "", email: "", password: "" });
+  const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -29,9 +29,7 @@ export default function Register() {
         <p className="muted" style={{ marginBottom: 20 }}>Únete a tu comunidad universitaria</p>
         <form onSubmit={onSubmit}>
           <div className="field"><label className="label">Nombre completo</label>
-            <input className="input" required value={form.fullName} onChange={set("fullName")} /></div>
-          <div className="field"><label className="label">Usuario</label>
-            <input className="input" required minLength={3} value={form.username} onChange={set("username")} /></div>
+            <input className="input" required value={form.name} onChange={set("name")} /></div>
           <div className="field"><label className="label">Email</label>
             <input className="input" type="email" required value={form.email} onChange={set("email")} /></div>
           <div className="field"><label className="label">Contraseña</label>
