@@ -25,7 +25,7 @@ export default function Layout() {
           </NavLink>
         ))}
         <div style={{ marginTop: "auto", paddingTop: 20 }}>
-          <div className="muted" style={{ marginBottom: 8 }}>{user?.fullName || user?.username}</div>
+          <div className="muted" style={{ marginBottom: 8 }}>{user?.name || user?.email}</div>
           <button className="btn btn-ghost" style={{ width: "100%" }}
             onClick={() => { logout(); navigate("/login"); }}>
             Cerrar sesión
