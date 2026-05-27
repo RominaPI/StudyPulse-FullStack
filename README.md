@@ -111,3 +111,31 @@ El frontend usa `src/lib/api.ts` que apunta a `VITE_API_URL`. Hay ejemplos en:
 ## 8. Paleta de colores
 
 `#ED3D9A` · `#D55B63` · `#0D8D86` · `#8DBE55` · `#4B44B1`
+
+## 9. Deploy
+
+Frontend:
+https://precious-magic-production-9914.up.railway.app
+
+Backend:
+https://studypulse-fullstack-production.up.railway.app/api/v1
+
+## 9. Autenticación
+
+El sistema usa JWT:
+
+- Login devuelve `access_token`
+- El token se guarda en `localStorage`
+- Se envía en requests protegidas:
+
+Authorization: Bearer <token>
+
+## 10. Arquitectura
+
+- Frontend: React + Vite + TypeScript
+- Backend: NestJS (API REST)
+- Base de datos principal: PostgreSQL
+- Base de datos secundaria: MongoDB
+- Autenticación: JWT
+- Comunicación: REST API
+- Deploy: Railway
