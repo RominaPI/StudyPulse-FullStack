@@ -8,12 +8,7 @@ import {
   Post,
   ParseUUIDPipe,
 } from '@nestjs/common';
-
-import {
-  ApiBearerAuth,
-  ApiTags,
-} from '@nestjs/swagger';
-
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import {
   IsDateString,
   IsIn,
@@ -25,99 +20,78 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
-
 import { TasksService } from './tasks.service';
-
+import { CurrentUser } from '../common/decorators/current-user.decorator';
+ 
 class CreateTaskDto {
-
   @IsString()
   @MaxLength(200)
   title: string;
-
+ 
   @IsOptional()
   @IsString()
   description?: string;
-
+ 
   @IsOptional()
   @IsDateString()
   due_date?: string;
-
+ 
   @IsOptional()
-  @IsIn([
-    'low',
-    'medium',
-    'high',
-    'urgent',
-  ])
+  @IsIn(['low', 'medium', 'high', 'urgent'])
   priority?: any;
-
+ 
   @IsOptional()
-  @IsIn([
-    'todo',
-    'in_progress',
-    'review',
-    'done',
-  ])
+  @IsIn(['todo', 'in_progress', 'review', 'done'])
   status?: any;
-
+ 
   @IsOptional()
   @IsInt()
   @Min(0)
   @Max(100)
   progress?: number;
-
+ 
   @IsOptional()
   @IsUUID()
   group_id?: string;
-
+ 
   @IsOptional()
   @IsUUID()
   assignee_id?: string;
 }
-
+ 
 @ApiTags('tasks')
 @ApiBearerAuth()
 @Controller('tasks')
 export class TasksController {
-
-  constructor(
-    private svc: TasksService,
-  ) {}
-
+  constructor(private svc: TasksService) {}
+ 
   @Get()
-  list() {
-    return this.svc.findAll();
+  list(@CurrentUser('id') userId: string) {
+    // Only return tasks belonging to the logged-in user
+    return this.svc.findByUser(userId);
   }
-
+ 
   @Post()
   create(
-    @Body()
-    dto: CreateTaskDto,
+    @CurrentUser('id') userId: string,
+    @Body() dto: CreateTaskDto,
   ) {
-    return this.svc.create(null, {
+    return this.svc.create(userId, {
       ...dto,
-      due_date: dto.due_date
-        ? new Date(dto.due_date)
-        : undefined,
+      due_date: dto.due_date ? new Date(dto.due_date) : undefined,
     });
   }
-
+ 
   @Patch(':id')
   update(
-    @Param('id', ParseUUIDPipe)
-    id: string,
-
-    @Body()
-    body: any,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() body: any,
   ) {
     return this.svc.update(id, body);
   }
-
+ 
   @Delete(':id')
-  remove(
-    @Param('id', ParseUUIDPipe)
-    id: string,
-  ) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.svc.remove(id);
   }
 }

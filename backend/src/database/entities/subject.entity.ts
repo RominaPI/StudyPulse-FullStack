@@ -8,72 +8,48 @@ import {
   OneToMany,
   Index,
 } from 'typeorm';
-
 import { University } from './university.entity';
 import { StudyGroup } from './study-group.entity';
-
+ 
 @Entity('subjects')
-@Index(['university_id', 'code'], { unique: true })
+@Index(['university_id', 'code', 'owner_id'], { unique: true })
 export class Subject {
-
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
+ 
   @Column({ length: 30 })
   code: string;
-
+ 
   @Column({ length: 200 })
   name: string;
-
-  @Column({
-    type: 'text',
-    nullable: true,
-  })
+ 
+  @Column({ type: 'text', nullable: true })
   description: string;
-
-  @Column({
-    type: 'jsonb',
-    nullable: true,
-  })
+ 
+  @Column({ type: 'jsonb', nullable: true })
   schedule: Record<string, any>;
-
-  @Column({
-    length: 80,
-    nullable: true,
-  })
+ 
+  @Column({ length: 80, nullable: true })
   professor: string;
-
-  @Column({
-    type: 'int',
-    default: 0,
-  })
+ 
+  @Column({ type: 'int', default: 0 })
   credits: number;
-
-  @ManyToOne(
-    () => University,
-    (u) => u.subjects,
-    {
-      onDelete: 'CASCADE',
-      nullable: true,
-    },
-  )
+ 
+  // Who created this subject (scopes data per user)
+  @Column({ nullable: true })
+  owner_id: string;
+ 
+  @ManyToOne(() => University, (u) => u.subjects, { onDelete: 'CASCADE', nullable: true })
   @JoinColumn({ name: 'university_id' })
   university?: University;
-
-  @Column({
-    type: 'uuid',
-    nullable: true,
-  })
+ 
+  @Column({ type: 'uuid', nullable: true })
   university_id?: string;
-
-  @OneToMany(
-    () => StudyGroup,
-    (g) => g.subject,
-  )
+ 
+  @OneToMany(() => StudyGroup, (g) => g.subject)
   groups: StudyGroup[];
-
-  @CreateDateColumn({
-    type: 'timestamptz',
-  })
+ 
+  @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;
 }
+ 
