@@ -1,29 +1,32 @@
-import { Body, Controller, HttpCode, Post, Get } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
+
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { ForgotPasswordDto, ResetPasswordDto } from './dto/forgot-password.dto';
-import { Public } from '../common/decorators/public.decorator';
-import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
-@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private auth: AuthService) {}
+  constructor(private readonly auth: AuthService) {}
 
-  @Public() @Post('register')
-  register(@Body() dto: RegisterDto) { return this.auth.register(dto); }
+  @Post('register')
+  register(@Body() dto: RegisterDto) {
+    return this.auth.register(dto);
+  }
 
-  @Public() @HttpCode(200) @Post('login')
-  login(@Body() dto: LoginDto) { return this.auth.login(dto); }
+  @Post('login')
+  login(@Body() dto: LoginDto) {
+    return this.auth.login(dto);
+  }
 
-  @Public() @HttpCode(200) @Post('forgot-password')
-  forgot(@Body() dto: ForgotPasswordDto) { return this.auth.forgotPassword(dto); }
+  @Post('forgot')
+  forgot(@Body() dto: ForgotPasswordDto) {
+    return this.auth.forgotPassword(dto);
+  }
 
-  @Public() @HttpCode(200) @Post('reset-password')
-  reset(@Body() dto: ResetPasswordDto) { return this.auth.resetPassword(dto); }
-
-  @ApiBearerAuth() @Get('me')
-  me(@CurrentUser() user: any) { return user; }
+  @Post('reset')
+  reset(@Body() dto: ResetPasswordDto) {
+    return this.auth.resetPassword(dto);
+  }
 }
